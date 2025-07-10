@@ -1,4 +1,4 @@
-﻿
+﻿using Mastermind;
 /// <summary>
 /// The main entry point for the Mastermind console application.
 /// </summary>
