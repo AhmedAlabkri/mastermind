@@ -1,4 +1,3 @@
-
 namespace Mastermind
 {
     /// <summary>
