@@ -20,14 +20,12 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <!-- This section configures code coverage reporting -->
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutputFormat>opencover</CoverletOutputFormat>
     <Threshold>90</Threshold>
+    <ExcludeByFile>../Program.cs</ExcludeByFile>
   </PropertyGroup>
 
-  <!-- This new section fixes the DirectoryNotFoundException. -->
-  <!-- It ensures the transcript files are copied to the test output directory. -->
   <ItemGroup>
     <None Update="Transcripts\**\*.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
