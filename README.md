@@ -108,3 +108,9 @@ The application accepts the following command-line arguments:
 
   -t, --tries <TRIES>  Specifies the number of attempts allowed.
                        [default: 10]
+```
+
+
+© 2025 Ahmed Al-Abkri.  
+This repository is published solely for evaluation by the Steer Elite Internship team.  
+Any commercial or educational reuse requires written permission.
