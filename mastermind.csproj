@@ -3,8 +3,25 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>my_mastermind</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <WarningsAsErrors>true</WarningsAsErrors>
+    <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta5.25306.1" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <InternalsVisibleTo Include="Mastermind.Tests" />
+  </ItemGroup>
+
+  <!-- This new section fixes the CS0436 warning. -->
+  <!-- It tells the main project to NOT compile any code from the test project's folder. -->
+  <ItemGroup>
+    <Compile Remove="Mastermind.Tests\**\*.cs" />
+  </ItemGroup>
 
 </Project>

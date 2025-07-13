@@ -1,75 +1,68 @@
-namespace Mastermind
+namespace Mastermind;
+
+/// <summary>Kicks off the Mastermind game loop, matching the PDF spec.</summary>
+public class Game
 {
-    /// <summary>
-    /// Manages the main game loop and player interaction.
-    /// </summary>
-    public class Game
+    private readonly Code     _secretCode;
+    private readonly int      _maxAttempts;
+    private readonly IConsole _console;
+
+    public Game(GameOptions opts, IConsole console)
     {
-        private readonly Code _secretCode;
-        private readonly int _maxAttempts;
+        _secretCode  = opts.SecretCode;
+        _maxAttempts = opts.MaxAttempts;
+        _console     = console;
+    }
 
-        public Game(Code secretCode, int maxAttempts)
+    public void Run()
+    {
+        // ── intro ──────────────────────────────────────────────────────────
+        _console.WriteLine("Will you find the secret code?");
+        _console.WriteLine("Please enter a valid guess");
+
+        // ── rounds ────────────────────────────────────────────────────────
+        for (int round = 0; round < _maxAttempts; round++)
         {
-            _secretCode = secretCode;
-            _maxAttempts = maxAttempts;
-        }
+            _console.WriteLine("---");
+            _console.WriteLine($"Round {round}");
 
-        /// <summary>
-        /// Starts and runs the main game loop until the player wins, loses, or quits.
-        /// </summary>
-        public void Run()
-        {
-            Console.WriteLine("Will you find the secret code?");
-            Console.WriteLine("Please enter a valid guess.");
-
-            int currentAttempt = 0;
-            while (currentAttempt < _maxAttempts)
+            while (true)
             {
-                Console.WriteLine("---");
-                Console.WriteLine($"Round {currentAttempt}");
-                Console.Write(">");
+                _console.Write(">");              // no newline
 
-                string? input = Console.ReadLine();
+                string? input = _console.ReadLine();
 
-                // Handle EOF (Ctrl+D on Unix, Ctrl+Z on Windows) for graceful exit.
-                if (input == null)
+                // EOF  → graceful exit
+                if (input is null)
                 {
-                    Console.WriteLine("\nExiting game.");
+                    _console.WriteLine();
                     return;
                 }
-                
-                // Basic format check before creating a Code object.
-                if (input.Length != GameConstants.CodeLength || input.Any(c => !char.IsDigit(c)))
-                {
-                    Console.WriteLine("Wrong input!");
-                    continue;
-                }
 
-                Code guess;
                 try
                 {
-                    guess = Code.From(input);
+                    var guess  = Code.From(input);
+                    var result = CodeEvaluator.Evaluate(_secretCode, guess);
+
+                    if (result.IsCorrect)
+                    {
+                        _console.WriteLine("Congratz! You did it!");
+                        return;
+                    }
+
+                    _console.WriteLine($"Well placed pieces: {result.WellPlaced}");
+                    _console.WriteLine($"Misplaced pieces: {result.Misplaced}");
+                    break;                         // next round
                 }
                 catch (ArgumentException)
                 {
-                    Console.WriteLine("Wrong input!");
-                    continue;
+                    _console.WriteLine();          // blank line only after wrong input
+                    _console.WriteLine("Wrong input!");
                 }
-
-                var result = Evaluator.Evaluate(_secretCode, guess);
-                if (result.IsCorrect)
-                {
-                    Console.WriteLine("Congratz! You did it!");
-                    return;
-                }
-
-                Console.WriteLine($"Well placed pieces: {result.WellPlaced}");
-                Console.WriteLine($"Misplaced pieces: {result.Misplaced}");
-                currentAttempt++;
             }
-
-            Console.WriteLine("---");
-            Console.WriteLine("You ran out of attempts! The code was: " + _secretCode.Value);
         }
+
+        _console.WriteLine("---");
+        _console.WriteLine($"You ran out of attempts! The code was: {_secretCode.Value}");
     }
 }
